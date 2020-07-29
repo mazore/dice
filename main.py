@@ -34,6 +34,9 @@ def draw_dice():
             brightness = img[pixel_y][pixel_x]
 
             die_number = ceil(brightness / 42.5)  # Map to 1-6
+            
+            if die_number == 0:
+                continue
 
             die_x = pixel_x*DIE_WIDTH + 0.5*DIE_WIDTH
             die_y = pixel_y*DIE_WIDTH + 0.5*DIE_WIDTH
