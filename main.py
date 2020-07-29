@@ -1,19 +1,20 @@
 import cv2
 import pygame as pg
 from math import ceil
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input', '-i', dest='img', action='store', required = True)
+    parser.add_argument('--output', '-o', dest='outname', action='store', type=str, default = 'output.png')
+    return parser.parse_args()
 
 DIE_WIDTH = 25
 RESOLUTION_FACTOR = 2
 
 pg.init()
-img = cv2.imread('input.png', 0)
-HEIGHT, WIDTH = img.shape
-WIDTH *= RESOLUTION_FACTOR
-HEIGHT *= RESOLUTION_FACTOR
-DOT_RADIUS = DIE_WIDTH // 10
-GRID_WIDTH = WIDTH // DIE_WIDTH
-GRID_HEIGHT = HEIGHT // DIE_WIDTH
-w = pg.display.set_mode((GRID_WIDTH * DIE_WIDTH, GRID_HEIGHT * DIE_WIDTH))
+
+HEIGHT, WIDTH, DOT_RADIUS, GRID_WIDTH, GRID_HEIGHT, w = [None] * 6
 
 DOT_CENTERS = {
     1: [(0, 0)],
@@ -24,11 +25,17 @@ DOT_CENTERS = {
     6: [(-1, -1), (1, -1), (-1, 1), (1, 1), (-1, 0), (1, 0)]
 }
 
-# Downscale image
-img = cv2.resize(img, (GRID_WIDTH, GRID_HEIGHT), interpolation=cv2.INTER_AREA)
+def init_globals(img):
+    global HEIGHT, WIDTH, DOT_RADIUS, GRID_WIDTH, GRID_HEIGHT, w
+    HEIGHT, WIDTH = img.shape
+    WIDTH *= RESOLUTION_FACTOR
+    HEIGHT *= RESOLUTION_FACTOR
+    DOT_RADIUS = DIE_WIDTH // 10
+    GRID_WIDTH = WIDTH // DIE_WIDTH
+    GRID_HEIGHT = HEIGHT // DIE_WIDTH
+    w = pg.display.set_mode((GRID_WIDTH * DIE_WIDTH, GRID_HEIGHT * DIE_WIDTH))
 
-
-def draw_dice():
+def draw_dice(img):
     for pixel_x in range(GRID_WIDTH):
         for pixel_y in range(GRID_HEIGHT):
             brightness = img[pixel_y][pixel_x]
@@ -44,7 +51,7 @@ def draw_dice():
                 pg.draw.circle(w, [255, 255, 255], (int(dot_x), int(dot_y)), DOT_RADIUS)
 
 
-def draw_lines():
+def draw_lines(img):
     for i in range(GRID_WIDTH):
         x = i * DIE_WIDTH
         pg.draw.line(w, [50, 50, 50], (x, 0), (x, WIDTH))
@@ -55,8 +62,14 @@ def draw_lines():
 
 
 if __name__ == '__main__':
-    draw_dice()
-    draw_lines()
+    args = parse_args()
+    img = cv2.imread(args.img, 0)
+    init_globals(img)
+    # Downscale image
+    img = cv2.resize(img, (GRID_WIDTH, GRID_HEIGHT), interpolation=cv2.INTER_AREA)
+
+    draw_dice(img)
+    draw_lines(img)
     pg.display.update()
-    pg.image.save(w, "output.png")
+    pg.image.save(w, args.outname)
     pg.quit()
