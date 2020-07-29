@@ -47,11 +47,11 @@ def draw_dice():
 def draw_lines():
     for i in range(GRID_WIDTH):
         x = i * DIE_WIDTH
-        pg.draw.line(w, [50, 50, 50], (x, 0), (x, WIDTH))
+        pg.draw.line(w, [50, 50, 50], (x, 0), (x, HEIGHT))
 
     for i in range(GRID_HEIGHT):
         y = i * DIE_WIDTH
-        pg.draw.line(w, [50, 50, 50], (0, y), (HEIGHT, y))
+        pg.draw.line(w, [50, 50, 50], (0, y), (WIDTH, y))
 
 
 if __name__ == '__main__':
