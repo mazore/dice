@@ -1,4 +1,4 @@
-import cv2
+import cv2  # pip install opencv-python
 import pygame as pg
 from math import ceil
 
